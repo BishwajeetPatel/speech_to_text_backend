@@ -6,15 +6,22 @@ const transcriptionRoutes = require('./routes/transcriptionRoutes');
 
 // Load environment variables
 dotenv.config();
-
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:3000'], // Your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
 // Routes
+
 app.use('/api/transcriptions', transcriptionRoutes);
 
 // Health check route

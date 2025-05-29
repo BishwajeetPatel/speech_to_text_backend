@@ -2,7 +2,6 @@
 const supabase = require('../config/supabase');
 const { transcribeAudio } = require('../services/speechToTextService');
 
-
 const fs = require('fs');
 
 // Upload and transcribe audio
@@ -51,12 +50,12 @@ exports.uploadAndTranscribe = async (req, res) => {
 exports.getTranscriptions = async (req, res) => {
   try {
     // Get user ID if authentication is implemented
-    const userId = req.user?.id || 'anonymous';
+    // const userId = req.user?.id || 'anonymous';
 
     const { data, error } = await supabase
       .from('transcriptions')
       .select('*')
-      .eq('user_id', userId)
+      // .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {

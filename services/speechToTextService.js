@@ -2,36 +2,34 @@
 const fs = require('fs');
 const util = require('util');
 const axios = require('axios');
-const FormData = require('form-data');
 
 const unlinkFile = util.promisify(fs.unlink);
 
-// This example uses OpenAI Whisper API - you could replace with Google Speech-to-Text or Mozilla DeepSpeech
 const transcribeAudio = async (filePath) => {
   try {
-    // For OpenAI Whisper API
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(filePath));
-    formData.append('model', 'whisper-1');
+    const audioData = fs.readFileSync(filePath);
 
     const response = await axios.post(
-      'https://api.openai.com/v1/audio/transcriptions',
-      formData,
+      'https://api.deepgram.com/v1/listen',
+      audioData,
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...formData.getHeaders(),
+          'Authorization': `Token ${process.env.DEEPGRAM_API_KEY}`,
+          'Content-Type': 'audio/mp3', // or 'audio/mpeg' / 'audio/mp3' depending on your file type
         },
+        params: {
+          punctuate: true,
+          language: 'en' // Change if you're using a different language
+        }
       }
     );
 
-    // Clean up the file after transcription
     await unlinkFile(filePath);
-    
-    return response.data.text;
+
+    return response.data.results.channels[0].alternatives[0].transcript;
 
   } catch (error) {
-    console.error('Error in transcribeAudio:', error);
+    console.error('Error in transcribeAudio:', error?.response?.data || error.message);
     throw new Error('Failed to transcribe audio');
   }
 };
