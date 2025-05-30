@@ -1,4 +1,4 @@
-// server.js
+// server.js - Updated with both routes
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -9,11 +9,11 @@ dotenv.config();
 
 const corsOptions = {
   origin: [
-    'http://localhost:5173',           // Vite dev server
-    'http://localhost:3000',           // React dev server
-    'http://localhost:4000',           // Backend dev server
-    'https://speech-to-text-frontend-2q1v.onrender.com', // Your production frontend
-    process.env.FRONTEND_URL           // Environment variable for flexibility
+    'http://localhost:5173',           
+    'http://localhost:3000',           
+    'http://localhost:4000',           
+    'https://speech-to-text-frontend-2q1v.onrender.com',
+    process.env.FRONTEND_URL           
   ], 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -29,8 +29,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
-// Routes
-app.use('/api/transcriptions', transcriptionRoutes);
+// Routes - ADD BOTH OF THESE LINES
+app.use('/transcriptions', transcriptionRoutes);     // ← ADD THIS LINE for /transcriptions
+app.use('/api/transcriptions', transcriptionRoutes); // ← Keep this for /api/transcriptions
 
 // Health check route
 app.get('/', (req, res) => {
